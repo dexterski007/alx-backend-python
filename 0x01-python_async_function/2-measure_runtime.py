@@ -5,13 +5,13 @@ from typing import List
 import random
 
 
-wait_random = __import__('0-basic_async_syntax').wait_random
+wait_n = __import__('1-concurrent_coroutines').wait_n
 
 
 async def wait_n(n: int, max_delay: int) -> List[float]:
     """ wait for randomness"""
     delays = []
-    for _ in range(n):
+    for i in range(n):
         delay = await wait_random(max_delay)
         delays.append(delay)
-    return sorted(delays)
+    return delays
