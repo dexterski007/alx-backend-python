@@ -80,6 +80,17 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             return Mock(json=lambda: cls.repos_payload)
         return Mock(json=lambda: {})
 
+    def test_public_repos(self):
+        """ method to test if this class ir working or not """
+        github_cli = GithubOrgClient("google")
+        self.assertEqual(github_cli.public_repos(), self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """ method to test if this can return licenses """
+        github_cli = GithubOrgClient("google")
+        self.assertEqual(github_cli.public_repos(license="apache-2.0"),
+                         self.apache2_repos)
+
 
 if __name__ == '__main__':
     unittest.main()
