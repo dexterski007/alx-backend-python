@@ -3,8 +3,9 @@
 from client import GithubOrgClient
 from unittest.mock import Mock, patch, PropertyMock
 import unittest
-from parameterized import parameterized
-from typing import Dict, Any
+from parameterized import parameterized, parameterized_class
+from typing import Dict
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -50,7 +51,34 @@ class TestGithubOrgClient(unittest.TestCase):
                          license_key: str, result) -> None:
         """ testing the presence of license """
         github_cli = GithubOrgClient("microsoft")
-        self.assertEqual(github_cli.has_license(repo,license_key), result)
+        self.assertEqual(github_cli.has_license(repo, license_key), result)
+
+
+@parameterized_class(('org_payload', 'repos_payload',
+                      'expected_repos', 'apache2_repos'),
+                     TEST_PAYLOAD)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """ class for integration test """
+    @classmethod
+    def setUpClass(cls) -> None:
+        """ setup class for building testing"""
+        cls.get_patcher = patch('requests.get')
+        cls.mock_get = cls.get_patcher.start()
+        cls.mock_get.side_effect = cls.side_effect_meth
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        """ class method for tearing down """
+        cls.get_patcher.stop()
+
+    @classmethod
+    def side_effect_meth(cls, url: str) -> Mock:
+        """ replacing default behaviour of class """
+        if url == "https://api.github.com/orgs/google":
+            return Mock(json=lambda: cls.org_payload)
+        elif url == "https://api.github.com/orgs/google/repos":
+            return Mock(json=lambda: cls.repos_payload)
+        return Mock(json=lambda: {})
 
 
 if __name__ == '__main__':
