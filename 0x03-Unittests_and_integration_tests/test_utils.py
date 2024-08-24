@@ -1,4 +1,7 @@
-""" testing unit for utils module """
+#!/usr/bin/env python3
+"""
+testing unit for utils module
+"""
 from utils import access_nested_map, get_json, memoize
 import unittest
 from unittest.mock import patch, Mock
